@@ -13,7 +13,8 @@ making documentation easy. That's where Construct comes in.
 
   config = Construct.new
 
-Hey, we have a configuration object. Let's describe a web site. Keys are always symbols, but can be accessed via methods just like an OpenStruct.
+Hey, we have a configuration object. Let's describe a web site. Keys are always
+symbols, but can be accessed via methods just like an OpenStruct.
 
   config.name = "Aphyr"
   config.base_url = "http://aphyr.com"
@@ -23,7 +24,8 @@ And getting at them is easy, too.
   config.name
     => "Aphyr"
 
-If the key you want is already a method, just use config#[] and config#[]=. Construct converts strings to symbols for you..
+If the key you want is already a method, just use config#[] and config#[]=.
+Construct converts strings to symbols for you..
 
 How about a database connection? Those parameters all belong together.
 
@@ -53,7 +55,8 @@ You can override this, naturally.
   config.db.host
     => 'db.aphyr.com'
 
-And it serializes neatly to YAML. Keys are expressed as strings, to save typing and make things look clean.
+And it serializes neatly to YAML. Keys are expressed as strings, to save typing
+and make things look clean.
 
   config.to_yaml =>
   --- 
@@ -67,7 +70,9 @@ Hey, this is easy! Now let's load that configuration from a string.
 
   config = Construct.load yaml
 
-Maybe you need to implement extra logic in your config--perhaps you can specify either a db hash as shown above, or a connection string. Just subclass Construct::Construct or define methods directly on the construct.
+Maybe you need to implement extra logic in your config--perhaps you can specify
+either a db hash as shown above, or a connection string. Just subclass
+Construct::Construct or define methods directly on the construct.
 
   class DBConfig < Construct::Construct
     def db_str
@@ -75,4 +80,5 @@ Maybe you need to implement extra logic in your config--perhaps you can specify 
     end
   end
 
-Problem solved. Now get back to having fun instead of worrying about configuration!
+Problem solved. Now get back to having fun instead of worrying about
+configuration!
