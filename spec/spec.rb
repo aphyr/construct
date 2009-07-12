@@ -81,3 +81,19 @@ HERE
     @complex.should.equal @loaded
   end
 end
+
+describe 'A structured construct' do
+  before do
+    @c = Construct.new
+    @c.define :foo, :default => 'hello world', :desc => 'A field for foos.'
+  end
+
+  it 'should use default values from the schema' do
+    @c.foo.should.equal 'hello world'
+  end
+
+  it 'should allow the schema to be overridden by assignment' do
+    @c.foo = 'hey'
+    @c.foo.should.equal 'hey'
+  end
+end

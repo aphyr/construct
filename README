@@ -1,73 +1,78 @@
 Construct is extensible, persistent, structured configuration for Ruby and
 humans with text editors. What do I mean?
 
-You have a ruby program. Maybe, as in my case, a Ramaze app. It needs to store
-some configuration data. It should be easily serialized to YAML so anyone can
-edit the file easily. It should support nested structures. It should minimize
-typing, and make access unambiguous. It should take no effort to create and extend multi-layer configuration with many data types and accessors. Moreover, it should allow you to define a schema for the options that are available, making documentation easy. That's where Construct comes in.
+You have a ruby program. Maybe it's a Ramaze app. It needs to store some
+configuration data. It should be easily serialized to YAML so anyone can edit
+the file easily. It should support nested structures. It should minimize
+typing, and make access unambiguous. It should take no effort to create and
+extend multi-layer configuration with many data types and accessors. Moreover,
+it should allow you to define a schema for the options that are available,
+making documentation easy. That's where Construct comes in.
 
-config = Construct.new
+  gem install construct
+
+  config = Construct.new
 
 Hey, we have a configuration object. Let's describe a web site. Keys are always symbols, but can be accessed via methods just like an OpenStruct.
 
-config.name = "Aphyr"
-config.base_url = "http://aphyr.com"
+  config.name = "Aphyr"
+  config.base_url = "http://aphyr.com"
 
 And getting at them is easy, too.
 
-config.name
-  => "Aphyr"
+  config.name
+    => "Aphyr"
 
 If the key you want is already a method, just use config#[] and config#[]=. Construct converts strings to symbols for you..
 
 How about a database connection? Those parameters all belong together.
 
-config.db = {
-  :user => 'cr',
-  :password => 'some password',
-}
+  config.db = {
+    :user => 'cr',
+    :password => 'some password',
+  }
 
 Secretly, Construct converted that hash into another Construct. You can chain
 methods to easily access nested options.
 
-config.db.user
-  => 'cr'
+  config.db.user
+    => 'cr'
 
 Databases need a host. Let's define a host field.
 
-config.db.schema[:host] = {
-  :default => '127.0.0.1',
-  :desc => 'The host the database adapter connects to.'
-}
-config.db.host
-  => '127.0.0.1'
+  config.db.schema[:host] = {
+    :default => '127.0.0.1',
+    :desc => 'The host the database adapter connects to.'
+  }
+  config.db.host
+    => '127.0.0.1'
 
 You can override this, naturally.
 
-config.db.host = 'db.aphyr.com'
-config.db.host
-  => 'db.aphyr.com'
+  config.db.host = 'db.aphyr.com'
+  config.db.host
+    => 'db.aphyr.com'
 
 And it serializes neatly to YAML. Keys are expressed as strings, to save typing and make things look clean.
 
-config.to_yaml =>
---- 
-db: 
-  user: cr
-  password: some password
-name: Aphyr
-base_url: http://aphyr.com
+  config.to_yaml =>
+  --- 
+  db: 
+    user: cr
+    password: some password
+  name: Aphyr
+  base_url: http://aphyr.com
 
 Hey, this is easy! Now let's load that configuration from a string.
 
-config = Construct.load yaml
+  config = Construct.load yaml
 
-Maybe you need to implement extra logic in your config--perhaps you can specify either a db hash as shown above, or a connection string. Just subclass Construct::Construct.
+Maybe you need to implement extra logic in your config--perhaps you can specify either a db hash as shown above, or a connection string. Just subclass Construct::Construct or define methods directly on the construct.
 
-class Config < Construct::Construct
-  def db_str
-    self[:db_str] || make_db_string_from_hash(db)
+  class DBConfig < Construct::Construct
+    def db_str
+      self[:db_str] || make_db_string_from_hash(db)
+    end
   end
-end
 
 Problem solved. Now get back to having fun instead of worrying about configuration!
