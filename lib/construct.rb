@@ -3,7 +3,7 @@ class Construct
   # Ruby and humans with text editors.
  
   APP_NAME = 'Construct'
-  APP_VERSION = '0.1.0'
+  APP_VERSION = '0.1.1'
   APP_AUTHOR = 'Kyle Kingsbury'
   APP_EMAIL = 'aphyr@aphyr.com'
   APP_URL = 'http://aphyr.com'
@@ -43,7 +43,7 @@ class Construct
 
     if @data.include? key
       @data[key]
-    elsif @schema.include? key
+    elsif @schema.include? key and @schema[key].include? :default
       @schema[key][:default]
     end 
   end
@@ -94,7 +94,7 @@ class Construct
   # Returns true if the construct has a value set for, or the schema defines,
   # the key.
   def include?(*args)
-    @data.include?(*args) or @schema.include?(*args)
+    @data.include?(*args) or (@schema.include?(*args) and @schema[*args].include? :default)
   end
 
   # Returns the keys, both set in the construct and specified in the schema.

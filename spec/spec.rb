@@ -96,4 +96,24 @@ describe 'A structured construct' do
     @c.foo = 'hey'
     @c.foo.should.equal 'hey'
   end
+
+  it 'should preserve nested schemas on load' do
+    class Conf < Construct
+      def initialize(*args)
+        super *args
+        define :db, :default => Construct.new
+        db.define :host, :default => '127.0.0.1'
+      end
+    end
+  
+    c = Conf.new
+    c.db.host.should.equal '127.0.0.1'
+
+    c = Conf.new(:db => {:user => 'username'})
+    c.db.host.should.equal '127.0.0.1'
+    c.db.user.should.equal 'username'
+    
+    c = Conf.new(:db => {:host => 'zoom'})
+    c.db.host.should.equal 'zoom'
+  end
 end

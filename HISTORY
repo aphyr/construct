@@ -1,2 +1,4 @@
-Version 0.1 (2009-7-12)
+Version 0.1.1 (2009-7-13)
+  - Schema defaults are only returned if :default is specified.
+Version 0.1.0 (2009-7-12)
   - First release
