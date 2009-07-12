@@ -42,10 +42,10 @@ methods to easily access nested options.
 
 Databases need a host. Let's define a host field.
 
-  config.db.schema[:host] = {
+  config.db.define(:host,
     :default => '127.0.0.1',
     :desc => 'The host the database adapter connects to.'
-  }
+  )
   config.db.host
     => '127.0.0.1'
 
@@ -55,8 +55,11 @@ You can override this, naturally.
   config.db.host
     => 'db.aphyr.com'
 
-And it serializes neatly to YAML. Keys are expressed as strings, to save typing
-and make things look clean.
+The schema is accessible as a hash via #schema, so you can easily pump out
+configuration docs, HTML forms, whatever.
+
+Construct serializes neatly to YAML. Keys are expressed as strings, to save
+typing and make things look clean.
 
   config.to_yaml =>
   --- 
