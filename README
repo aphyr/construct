@@ -77,11 +77,25 @@ Maybe you need to implement extra logic in your config--perhaps you can specify
 either a db hash as shown above, or a connection string. Just subclass
 Construct::Construct or define methods directly on the construct.
 
-  class DBConfig < Construct::Construct
+  class DBConfig < Construct
     def db_str
       self[:db_str] || make_db_string_from_hash(db)
     end
   end
+
+Defining schemas at the class level, as opposed to creating a Construct
+instance and operating on its schema is easy. Just use Construct.define to
+operate on the class schema. When you create an instance of that class, the class schema is used as a default for the instance.
+
+  class UserConfig < Construct
+    define :state,
+      :desc => "The user's home state"
+      :default => "Oregon"
+    end
+  end
+
+  conf = UserConfig.new
+  conf.state # => "Oregon"
 
 Problem solved. Now get back to having fun instead of worrying about
 configuration!

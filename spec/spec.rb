@@ -117,3 +117,14 @@ describe 'A structured construct' do
     c.db.host.should.equal 'zoom'
   end
 end
+
+describe 'A subclassed Construct with a schema' do
+  it 'should support a DSL for schema setting' do
+    class Conf < Construct
+      define :people,
+        :default => []
+    end
+    Conf.schema.should.equal({:people => {:default => []}})
+    Conf.new.people.should.equal []
+  end
+end

@@ -18,10 +18,26 @@ class Construct
   yaml_as "tag:aphyr.com,2009:construct"
   yaml_as "tag:yaml.org,2002:map"
 
+  class << self
+    attr_writer :schema
+  end
+
+  # Define a schema for a key on the class. The class schema is used as the
+  # defaults on initialization of a new instance.
+  def self.define(key, schema)
+    key = key.to_sym if String === key
+    @schema[key] = schema
+  end 
+
   # Load a construct from a YAML string
   def self.load(yaml)
     hash = YAML::load(yaml)
     new(hash)
+  end
+
+  # Returns the class schema
+  def self.schema
+    @schema ||= {}
   end
 
   attr_accessor :schema, :data
@@ -31,7 +47,7 @@ class Construct
     data.each do |key, value|
       self[key] = value
     end
-    @schema = schema
+    @schema = self.class.schema.merge(schema)
   end
 
   def ==(other)
