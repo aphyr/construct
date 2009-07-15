@@ -1,3 +1,5 @@
+Version 0.1.2 (2009-7-14)
+  - Missing key message now tells you what key was missing.
 Version 0.1.1 (2009-7-13)
   - Schema defaults are only returned if :default is specified.
   - New class-level DSL for defining schema.
