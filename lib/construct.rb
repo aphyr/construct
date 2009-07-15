@@ -133,7 +133,7 @@ class Construct
     elsif include? meth
       self[meth]
     else
-      raise NoMethodError.new('no such key in construct')
+      raise NoMethodError.new("no such key #{meth} in construct")
     end
   end
 
