@@ -11,13 +11,6 @@ class Construct
 
   require 'yaml'
 
-  YAML::add_domain_type("aphyr.com,2009", "construct") do |type, val|
-    # Not implemented ;)
-    Construct.load(val)
-  end
-  yaml_as "tag:aphyr.com,2009:construct"
-  yaml_as "tag:yaml.org,2002:map"
-
   class << self
     attr_writer :schema
   end
@@ -28,15 +21,6 @@ class Construct
     key = key.to_sym if String === key
     @schema[key] = schema
   end 
-
-  # When we are inherited by a subclass, convince YAML to serialize them
-  # as maps directly.
-  def self.inherited(klass)
-    klass.instance_eval do
-      yaml_as "tag:aphyr.com,2009:construct"
-      yaml_as "tag:yaml.org,2002:map"
-    end
-  end
 
   # Load a construct from a YAML string
   def self.load(yaml)
@@ -60,7 +44,8 @@ class Construct
   end
 
   def ==(other)
-    @schema == other.schema and @data == other.data
+    other.respond_to? :schema and other.respond_to? :data and
+      @schema == other.schema and @data == other.data
   end
 
   def [](key)
@@ -148,13 +133,36 @@ class Construct
 
   # Dumps the data (not the schema!) of this construct to YAML. Keys are
   # expressed as strings.
+  # 
+  # This gets a little complicated.
+  #
+  # If you define a schema where the default is a Construct
+  #
+  #   conf.define :sub, :default => Construct
+  #
+  # and then try to write to it:
+  #
+  #   conf.sub.opt = 2
+  #
+  # That opt gets stored on the *schema* sub. Everything works fine... except
+  # that when it comes time to serialize there's now *data* buried in the
+  # schema tree. Therefore, we write out schema objects as well when they are
+  # non-empty.
   def to_yaml(opts = {})
-    YAML::quick_emit(self, opts) do |out|
-      out.map(taguri, to_yaml_style) do |map|
-        @data.each do |key, value|
-          map.add(key.to_s, value)
-        end
+    hash = {}
+    @schema.each do |key, value|
+      if value[:default].kind_of? Construct
+        hashed = YAML::load(value[:default].to_yaml)
+        next if hashed.empty?
+        hash[key.to_s] = hashed
+      else
+        hash[key.to_s] = value[:default]
       end
     end
+
+    @data.each do |key, value|
+      hash[key.to_s] = value
+    end
+    hash.to_yaml(opts)
   end
 end

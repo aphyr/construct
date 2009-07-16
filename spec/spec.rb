@@ -23,9 +23,6 @@ bar:
   - 2
   - 3
 HERE
-
-
-
   end
 
   it 'should not respond to unspecified keys' do
@@ -80,6 +77,11 @@ HERE
     @loaded = Construct.load(yaml)
     @complex.should.equal @loaded
   end
+
+  it 'should not interfere with normal YAML parsing' do
+    yaml = YAML::dump({'hey' => 2})
+    YAML::load(yaml).should.equal({'hey' => 2})
+  end
 end
 
 describe 'A structured construct' do
@@ -116,6 +118,15 @@ describe 'A structured construct' do
     c = Conf.new(:db => {:host => 'zoom'})
     c.db.host.should.equal 'zoom'
   end
+
+  should 'serialize to YAML' do
+    c = Conf.new
+    c.db.host = 'yeah'
+    c.to_yaml.should.equal "--- 
+db: 
+  host: yeah
+"
+  end
 end
 
 describe 'A subclassed Construct with a schema' do
@@ -128,13 +139,21 @@ describe 'A subclassed Construct with a schema' do
     Conf.new.people.should.equal []
   end
 
-  should 'serialize correctly to YAML' do
-    conf = Conf.new
-    conf.people = [:me, :you]
+  should 'support overriding initialize() to define schema' do
+    class Conf2 < Construct
+      def initialize(*a)
+        super *a
+
+        define :people, :default => Construct.new
+      end
+    end
+
+    conf = Conf2.new
+    conf.people.class.should.equal Construct
+    conf.people.me = 'foo'
     conf.to_yaml.should.equal "--- 
 people: 
-- :me
-- :you
+  me: foo
 "
   end
 end
