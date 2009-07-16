@@ -127,4 +127,14 @@ describe 'A subclassed Construct with a schema' do
     Conf.schema.should.equal({:people => {:default => []}})
     Conf.new.people.should.equal []
   end
+
+  should 'serialize correctly to YAML' do
+    conf = Conf.new
+    conf.people = [:me, :you]
+    conf.to_yaml.should.equal "--- 
+people: 
+- :me
+- :you
+"
+  end
 end

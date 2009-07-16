@@ -29,6 +29,15 @@ class Construct
     @schema[key] = schema
   end 
 
+  # When we are inherited by a subclass, convince YAML to serialize them
+  # as maps directly.
+  def self.inherited(klass)
+    klass.instance_eval do
+      yaml_as "tag:aphyr.com,2009:construct"
+      yaml_as "tag:yaml.org,2002:map"
+    end
+  end
+
   # Load a construct from a YAML string
   def self.load(yaml)
     hash = YAML::load(yaml)
