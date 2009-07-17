@@ -145,6 +145,7 @@ describe 'A subclassed Construct with a schema' do
         super *a
 
         define :people, :default => Construct.new
+        people.define :mark, :default => 1
       end
     end
 

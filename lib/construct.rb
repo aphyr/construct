@@ -155,8 +155,6 @@ class Construct
         hashed = YAML::load(value[:default].to_yaml)
         next if hashed.empty?
         hash[key.to_s] = hashed
-      else
-        hash[key.to_s] = value[:default]
       end
     end
 
