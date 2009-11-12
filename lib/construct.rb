@@ -112,7 +112,12 @@ class Construct
     @data.keys | @schema.keys
   end
 
-  def load(str)
+  def load(yaml)
+    data = YAML::load(yaml)
+
+    data.each do |key, value|
+      self[key] = value
+    end
   end
 
   def method_missing(meth, *args)
