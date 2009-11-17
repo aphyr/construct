@@ -125,6 +125,24 @@ describe 'A structured construct' do
     c.db.host.should.equal 'zoom'
   end
 
+  it 'should be able to load from additional YAML files' do
+    @c.load(<<-YAML
+    :new_key: foo
+    :new_key2: bar
+    YAML
+    )
+    
+    @c.new_key.should.equal 'foo'
+    @c.new_key2.should.equal 'bar'
+    
+    @c.load(<<-YAML
+    :foo: overridden
+    YAML
+    )
+    
+    @c.foo.should.equal 'overridden'
+  end
+  
   should 'serialize to YAML' do
     c = Conf.new
     c.db.host = 'yeah'

@@ -3,7 +3,7 @@ class Construct
   # Ruby and humans with text editors.
  
   APP_NAME = 'Construct'
-  APP_VERSION = '0.1.3'
+  APP_VERSION = '0.1.4'
   APP_AUTHOR = 'Kyle Kingsbury'
   APP_EMAIL = 'aphyr@aphyr.com'
   APP_URL = 'http://aphyr.com'
@@ -121,7 +121,12 @@ class Construct
     @data.keys | @schema.keys
   end
 
-  def load(str)
+  def load(yaml)
+    data = YAML::load(yaml)
+
+    data.each do |key, value|
+      self[key] = value
+    end
   end
 
   def method_missing(meth, *args)
