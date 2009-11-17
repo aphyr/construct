@@ -3,7 +3,7 @@ class Construct
   # Ruby and humans with text editors.
  
   APP_NAME = 'Construct'
-  APP_VERSION = '0.1.4'
+  APP_VERSION = '0.1.5'
   APP_AUTHOR = 'Kyle Kingsbury'
   APP_EMAIL = 'aphyr@aphyr.com'
   APP_URL = 'http://aphyr.com'
