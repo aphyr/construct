@@ -11,6 +11,8 @@ class Construct
 
   require 'yaml'
 
+  include Enumerable
+
   class << self
     attr_writer :schema
   end
@@ -99,6 +101,13 @@ class Construct
   def delete(key)
     key = key.to_sym if String === key
     @data.delete key
+  end
+
+  # Like enumerable#each. Operates on each key.
+  def each
+    keys.each do |key|
+      yield key, self[key]
+    end      
   end
 
   # Returns true if the construct has a value set for, or the schema defines,

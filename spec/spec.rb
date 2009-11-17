@@ -72,6 +72,12 @@ HERE
     @complex.to_yaml.should.equal @yaml
   end
 
+  it 'should be enumerable' do
+    @complex.each do |k, v|
+      @complex.send(k).should == v
+    end
+  end
+
   it 'should load from YAML' do
     yaml = YAML::dump @complex
     @loaded = Construct.load(yaml)
