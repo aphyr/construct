@@ -88,6 +88,15 @@ HERE
     yaml = YAML::dump({'hey' => 2})
     YAML::load(yaml).should.equal({'hey' => 2})
   end
+
+  it 'should support deep cloning with dup' do
+    d = @complex.dup
+    c = @complex
+    c.should.not.equal? d
+    c.foo.should.not.equal? d.foo
+    c.bar.should.not.equal? d.bar
+    c.bar.zoom.should.not.equal? d.bar.zoom
+  end
 end
 
 describe 'A structured construct' do

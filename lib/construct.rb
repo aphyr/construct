@@ -103,6 +103,11 @@ class Construct
     @data.delete key
   end
 
+  # A deep (not shallow!) clone of this construct.
+  def dup
+    Marshal.load(Marshal.dump(self))
+  end
+
   # Like enumerable#each. Operates on each key.
   def each
     keys.each do |key|
