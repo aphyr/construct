@@ -5,6 +5,7 @@ require 'bundler'
 Bundler.setup
 
 require 'bacon'
+require 'tempfile'
 require 'construct'
 
 describe "An open Construct" do
@@ -86,6 +87,20 @@ HERE
     @loaded = Construct.load(yaml)
     @complex.should.equal @loaded
   end
+
+  it 'should load from a YAML file' do
+    begin
+      yaml = YAML::dump @complex
+      file = Tempfile.new('construct')
+      file.write(yaml)
+      file.close
+      loaded = Construct.load_file(file.path)
+      @complex.should.equal loaded
+    ensure
+      file.unlink
+    end
+  end
+
 
   it 'should not interfere with normal YAML parsing' do
     yaml = YAML::dump({'hey' => 2})

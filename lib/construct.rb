@@ -30,6 +30,11 @@ class Construct
     new(hash)
   end
 
+  def self.load_file(filename)
+    hash = YAML::load_file(filename)
+    new(hash)
+  end
+
   # Returns the class schema
   def self.schema
     @schema ||= {}
