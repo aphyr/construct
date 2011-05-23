@@ -1,8 +1,11 @@
 #!/usr/bin/ruby
-
 require 'rubygems'
+require 'bundler'
+
+Bundler.setup
+
 require 'bacon'
-require File.dirname(__FILE__) + '/../lib/construct'
+require 'construct'
 
 describe "An open Construct" do
   before do
