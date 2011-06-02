@@ -136,7 +136,7 @@ describe 'A structured construct' do
   it 'to_hash' do
     @c.bar = true
     h = @c.to_hash
-    h.should == {:bar => true, :foo => 'hey'}
+    h.should == {:bar => true, :foo => 'hello world'}
   end
 
   it 'should preserve nested schemas on load' do
