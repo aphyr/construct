@@ -3,11 +3,11 @@ class Construct
   # Ruby and humans with text editors.
 
   APP_NAME = 'Construct'
-  APP_VERSION = '0.1.6'
+  APP_VERSION = '0.1.7'
   APP_AUTHOR = 'Kyle Kingsbury'
+  APP_CONTRIBUTORS = ['Kyle Kingsbury', 'Spencer Miles', 'John MacKenzie']
   APP_EMAIL = 'aphyr@aphyr.com'
-  APP_URL = 'http://aphyr.com'
-  APP_COPYRIGHT = 'Copyright (c) 2009 Kyle Kingsbury <aphyr@aphyr.com>. All rights reserved.'
+  APP_URL = 'http://github.com/aphyr/construct'
 
   require 'yaml'
 
