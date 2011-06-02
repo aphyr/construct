@@ -150,6 +150,22 @@ class Construct
     end
   end
 
+  # Flattens this construct (recursively) into a hash, merging schema with
+  # values. Useful for passing a Construct to a library that checks kind_of?
+  def to_hash
+    inject({}) do |hash, pair|
+      value = pair[1]
+      hash[pair[0]] = case value
+      when Construct
+        value.to_hash
+      else
+        value
+      end
+
+      hash
+    end
+  end
+  
   # Dumps the data (not the schema!) of this construct to YAML. Keys are
   # expressed as strings.
   # 

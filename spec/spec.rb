@@ -113,6 +113,12 @@ describe 'A structured construct' do
     @c.foo = 'hey'
     @c.foo.should.equal 'hey'
   end
+  
+  it 'to_hash' do
+    @c.bar = true
+    h = @c.to_hash
+    h.should == {:bar => true, :foo => 'hey'}
+  end
 
   it 'should preserve nested schemas on load' do
     class Conf < Construct
