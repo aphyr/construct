@@ -1,8 +1,13 @@
 #!/usr/bin/ruby
-
 require 'rubygems'
+require 'bundler'
+
+Bundler.setup
+
+require 'ostruct'
+require 'tempfile'
 require 'bacon'
-require File.dirname(__FILE__) + '/../lib/construct'
+require 'construct'
 
 describe "An open Construct" do
   before do
@@ -84,6 +89,20 @@ HERE
     @complex.should.equal @loaded
   end
 
+  it 'should load from a YAML file' do
+    begin
+      yaml = YAML::dump @complex
+      file = Tempfile.new('construct')
+      file.write(yaml)
+      file.close
+      loaded = Construct.load_file(file.path)
+      @complex.should.equal loaded
+    ensure
+      file.unlink
+    end
+  end
+
+
   it 'should not interfere with normal YAML parsing' do
     yaml = YAML::dump({'hey' => 2})
     YAML::load(yaml).should.equal({'hey' => 2})
@@ -128,14 +147,14 @@ describe 'A structured construct' do
         db.define :host, :default => '127.0.0.1'
       end
     end
-  
+
     c = Conf.new
     c.db.host.should.equal '127.0.0.1'
 
     c = Conf.new(:db => {:user => 'username'})
     c.db.host.should.equal '127.0.0.1'
     c.db.user.should.equal 'username'
-    
+
     c = Conf.new(:db => {:host => 'zoom'})
     c.db.host.should.equal 'zoom'
   end
@@ -146,18 +165,18 @@ describe 'A structured construct' do
     :new_key2: bar
     YAML
     )
-    
+
     @c.new_key.should.equal 'foo'
     @c.new_key2.should.equal 'bar'
-    
+
     @c.load(<<-YAML
     :foo: overridden
     YAML
     )
-    
+
     @c.foo.should.equal 'overridden'
   end
-  
+
   should 'serialize to YAML' do
     c = Conf.new
     c.db.host = 'yeah'
@@ -170,12 +189,12 @@ end
 
 describe 'A subclassed Construct with a schema' do
   it 'should support a DSL for schema setting' do
-    class Conf < Construct
+    class SubClassedConf < Construct
       define :people,
         :default => []
     end
-    Conf.schema.should.equal({:people => {:default => []}})
-    Conf.new.people.should.equal []
+    SubClassedConf.schema.should.equal({:people => {:default => []}})
+    SubClassedConf.new.people.should.equal []
   end
 
   should 'support overriding initialize() to define schema' do
@@ -195,5 +214,20 @@ describe 'A subclassed Construct with a schema' do
 people: 
   me: foo
 "
+  end
+
+  it 'should deep clone default values when fetched for the first time to prevent instances from stepping on each other' do
+    class DupClass < Construct
+      define :other, :default => OpenStruct.new
+    end
+
+    instance = DupClass.new
+    other_instance = DupClass.new
+
+    instance.other.option = 'value'
+    other_instance.other.option = 'different value'
+
+    instance.other.option.should.equal 'value'
+    other_instance.other.option.should.equal 'different value'
   end
 end
