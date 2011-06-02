@@ -1,7 +1,7 @@
 class Construct
   # Construct is extensible, persistent, structured configuration for
   # Ruby and humans with text editors.
- 
+
   APP_NAME = 'Construct'
   APP_VERSION = '0.1.6'
   APP_AUTHOR = 'Kyle Kingsbury'
@@ -13,20 +13,21 @@ class Construct
 
   include Enumerable
 
-  class << self
-    attr_writer :schema
-  end
-
   # Define a schema for a key on the class. The class schema is used as the
   # defaults on initialization of a new instance.
   def self.define(key, schema)
     key = key.to_sym if String === key
-    @schema[key] = schema
-  end 
+    self.schema[key] = schema
+  end
 
   # Load a construct from a YAML string
   def self.load(yaml)
     hash = YAML::load(yaml)
+    new(hash)
+  end
+
+  def self.load_file(filename)
+    hash = YAML::load_file(filename)
     new(hash)
   end
 
@@ -56,8 +57,8 @@ class Construct
     if @data.include? key
       @data[key]
     elsif @schema.include? key and @schema[key].include? :default
-      @schema[key][:default]
-    end 
+      @data[key] = Marshal.load(Marshal.dump(@schema[key][:default]))
+    end
   end
 
   # Assign a value to a key. Constructs accept only symbols as values,
@@ -73,7 +74,7 @@ class Construct
 
     # Convert suitable hashes into Constructs
     if value.is_a? Hash
-      if value.keys.all? { |k| 
+      if value.keys.all? { |k|
             k.is_a? String or k.is_a? Symbol
           }
         value = Construct.new(value)
@@ -112,7 +113,7 @@ class Construct
   def each
     keys.each do |key|
       yield key, self[key]
-    end      
+    end
   end
 
   # Returns true if the construct has a value set for, or the schema defines,
@@ -152,7 +153,7 @@ class Construct
 
   # Dumps the data (not the schema!) of this construct to YAML. Keys are
   # expressed as strings.
-  # 
+  #
   # This gets a little complicated.
   #
   # If you define a schema where the default is a Construct
