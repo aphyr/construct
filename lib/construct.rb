@@ -38,8 +38,9 @@ class Construct
 
   attr_accessor :schema, :data
 
-  def initialize(data = {}, schema = {})
+  def initialize(data = {}, schema = {}, &block)
     @data = Hash.new
+    BlockParser.new(data, &block) if block
     data.each do |key, value|
       self[key] = value
     end
@@ -198,5 +199,28 @@ class Construct
       hash[key.to_s] = value
     end
     hash.to_yaml(opts)
+  end
+
+  class BlockParser < BasicObject
+    def initialize(data={}, &block)
+      @data = data
+      instance_eval(&block)
+    end
+
+    def method_missing(name, *args, &block)
+      if block
+        @data[name] = {}
+        BlockParser.new(@data[name], &block)
+      else
+        case args.size
+        when 0
+          @data[name]
+        when 1
+          @data[name] = args.first
+        else
+          @data[name] = args
+        end
+      end
+    end
   end
 end
