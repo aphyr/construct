@@ -1,8 +1,9 @@
 #!/usr/bin/ruby
 require 'rubygems'
-require 'bundler'
 
-Bundler.setup
+# use `bundler exec` instead
+#require 'bundler'
+#Bundler.setup
 
 require 'ostruct'
 require 'tempfile'
@@ -119,6 +120,15 @@ HERE
 end
 
 describe 'A structured construct' do
+
+  class Conf < Construct
+    def initialize(*args)
+      super *args
+      define :db, :default => Construct.new
+      db.define :host, :default => '127.0.0.1'
+    end
+  end
+
   before do
     @c = Construct.new
     @c.define :foo, :default => 'hello world', :desc => 'A field for foos.'
@@ -140,14 +150,6 @@ describe 'A structured construct' do
   end
 
   it 'should preserve nested schemas on load' do
-    class Conf < Construct
-      def initialize(*args)
-        super *args
-        define :db, :default => Construct.new
-        db.define :host, :default => '127.0.0.1'
-      end
-    end
-
     c = Conf.new
     c.db.host.should.equal '127.0.0.1'
 
@@ -230,4 +232,18 @@ people:
     instance.other.option.should.equal 'value'
     other_instance.other.option.should.equal 'different value'
   end
+end
+
+describe 'A block built Construct' do
+
+  it 'should accept a block' do
+    c = Construct.new do
+      name 'Tommy'
+      age 70
+    end
+
+    c.name.should.equal 'Tommy'
+    c.age.should.equal 70
+  end
+
 end
